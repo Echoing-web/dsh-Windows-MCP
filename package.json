@@ -1,0 +1,69 @@
+{
+  "name": "dsh-windows-mcp",
+  "version": "0.3.0",
+  "description": "DeepSeek Harness 的 Windows-MCP 深度适配：给 CursorTouch/Windows-MCP 补上坐标映射、动作新鲜度闸门、进程漂移复核、急停开关与审计日志。项目代号 dsh_Windows_MCP。",
+  "type": "module",
+  "main": "index.js",
+  "exports": {
+    ".": "./index.js",
+    "./package.json": "./package.json",
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./lib/*": "./lib/*"
+  },
+  "files": [
+    "index.js",
+    "lib",
+    "scripts",
+    "cordis.patch.yml",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "cordis",
+    "windows-mcp",
+    "computer-use",
+    "desktop-automation",
+    "coordinates",
+    "uiautomation"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": "^22.19.0 || >=24.0.0"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "^4.0.2",
+    "@deepseek-ai/dsh-mcp-client": ">=0.2.0-rc.2 <0.3.0-0",
+    "@deepseek-ai/dsh-tools": ">=0.2.0-rc.2 <0.3.0-0"
+  },
+  "peerDependenciesMeta": {
+    "@deepseek-ai/dsh-mcp-client": {
+      "optional": true
+    },
+    "@deepseek-ai/dsh-tools": {
+      "optional": true
+    }
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "scripts": {
+    "test": "node --test --experimental-test-isolation=none",
+    "test:unit": "node --test test/*.test.mjs",
+    "test:behaviors": "node --test \"test/behaviors/*.test.mjs\"",
+    "test:spec": "node --test --experimental-test-isolation=none test/spec/*.test.mjs",
+    "test:functional": "node scripts/functional-suite.mjs",
+    "test:functional:fast": "node scripts/functional-suite.mjs --fast",
+    "test:mutants": "node scripts/mutants.mjs",
+    "test:sanitize": "node scripts/sanitize-check.mjs",
+    "test:live": "node scripts/live-probe.mjs",
+    "coverage": "node scripts/render-coverage.mjs",
+    "coverage:check": "node scripts/render-coverage.mjs --check",
+    "audit-report": "node scripts/audit-report.mjs",
+    "verify": "node scripts/functional-suite.mjs"
+  }
+}

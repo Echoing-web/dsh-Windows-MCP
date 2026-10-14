@@ -1,0 +1,62 @@
+# dsh_Windows_MCP —— DSH bundle patch
+#
+# 这一层只插入**本插件自己的行**。
+#
+# 为什么不在这里插入 MCP 桥接行（`@deepseek-ai/dsh-mcp-client`）：
+# 本机 desktop profile 的 cordis.patch.yml 已经用 `- insert:` 建好了 id 为
+# `mcp-winmcp` 的桥接行（Windows-MCP 因此已经可用）。若本层再 insert 同一个 id，
+# Loader 会直接报 `duplicate loader entry id: mcp-winmcp` 而启动失败。
+# 一个 id 只能被一个层 insert —— 这条规则是实测出来的，别绕。
+#
+# 换一台机器、由本 bundle 负责桥接行时，把下面注释里的那段一起打开，
+# 同时删掉 profile 里那段 insert。
+#
+#     - id: mcp-winmcp
+#       name: '@deepseek-ai/dsh-mcp-client'
+#       config:
+#         transport: stdio
+#         serverName: winmcp
+#         command: 'C:\Users\<you>\.dsh\runtimes\windows-mcp\venv\Scripts\python.exe'
+#         args: [-m, windows_mcp, serve]
+#         env: { ANONYMIZED_TELEMETRY: 'false' }
+#         toolCallTimeoutMs: 120000
+#         failOnStartupError: false
+#
+# 配置项完整说明见 README 的配置表；测试会强制 README / 本文件 / index.js 三处一致。
+- insert:
+    - id: dsh-windows-mcp
+      name: 'dsh-windows-mcp'
+      config:
+        # 必须与桥接行的 serverName 一致：工具名 = mcp__<serverName>__
+        serverName: winmcp
+        # 依赖的观测最旧可以有多久；超过就拒绝输入类动作
+        maxObservationAgeMs: 60000
+        # 输入类动作必须有前置观测
+        requireObservation: true
+        # 观测缺少坐标信息时只提示、不阻断
+        requireCoordinateMapping: true
+        # 复核目标窗口/进程是否在观测之后变化过
+        requireProcessMatch: true
+        # 高影响工具（PowerShell/Registry/FileSystem/Process/App/Clipboard/Notification）是否走审批
+        # 注意：本机会话审批策略是 never，打开此项需要真正的审批通道，否则会按失败关闭直接拒绝
+        requireApproval: false
+        # 输入类动作是否也走审批
+        requireApprovalForInput: false
+        approvalTtlMs: 120000
+        # 在 Snapshot/Screenshot 结果后追加单行结构化坐标映射
+        annotateResults: true
+        # 把当前观测注入运行时上下文（每轮重建）：编号 / 换算系数 / 原点 / 年龄 / 焦点窗口
+        injectContext: true
+        # 命令级策略：按内容判定危险操作（Batch 3）
+        # 注意：内置危险规则不可通过本文件移除，只能用 allowRules 显式豁免
+        commandRulesEnabled: true
+        # 追加的自定义危险规则（{id, pattern, risk, reason}）
+        commandRules: []
+        # 内置规则的显式豁免（规则 id 数组）；豁免会记入审计的 ruleExempted
+        allowRules: []
+        # 注册 winmcp_state / winmcp_to_screen / winmcp_screen_to_image / winmcp_kill / winmcp_audit
+        registerTools: true
+        # 审计：空字符串表示用默认路径 $DSH_HOME/logs/windows-mcp-audit.jsonl
+        # 设 autoAudit: false 可完全关闭
+        autoAudit: true
+        auditMaxBytes: 8388608

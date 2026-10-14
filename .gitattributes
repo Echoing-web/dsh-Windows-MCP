@@ -1,0 +1,11 @@
+# 本仓库统一使用 LF 存盘。
+# 理由：项目里有多处对换行符敏感的解析逻辑（Windows-MCP 的真实输出是 CRLF，
+# 我们在代码里把它归一化）。如果 Git 在检出时自动做 CRLF 转换，
+# 同一份文件在不同机器上会得到不同字节，测试里的 CRLF 用例就失去意义。
+* text=auto eol=lf
+
+# 二进制文件不参与行尾转换
+*.png binary
+*.jpg binary
+*.gif binary
+*.ico binary
