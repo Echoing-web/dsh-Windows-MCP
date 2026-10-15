@@ -1,6 +1,6 @@
 # dsh_Windows_MCP
 
-把 [CursorTouch/Windows-MCP](https://github.com/CursorTouch/Windows-MCP) 从「能用」推进到「敢用」的 DeepSeek Harness 插件。
+由 [CursorTouch/Windows-MCP](https://github.com/CursorTouch/Windows-MCP)开发的 DeepSeek Harness 插件。
 
 Windows-MCP 本身由 DSH 内置的 `@deepseek-ai/dsh-mcp-client` 桥接入，工具以 `mcp__winmcp__<Tool>` 出现。
 桥只做协议搬运：它把 MCP 的工具注册进来、把图片落成 DSH 附件，**不做任何语义加工**。
